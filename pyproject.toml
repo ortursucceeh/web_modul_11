@@ -8,6 +8,12 @@ packages = [{include = "modul_11"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+fastapi = "^0.91.0"
+uvicorn = {extras = ["standard"], version = "^0.20.0"}
+sqlalchemy = "^2.0.3"
+psycopg2 = "^2.9.5"
+python-multipart = "^0.0.5"
+alembic = "^1.9.3"
 
 
 [build-system]

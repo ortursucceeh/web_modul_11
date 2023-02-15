@@ -1,11 +1,9 @@
-from fastapi import FastAPI, Path, Query, Depends, HTTPException, Request, status, File, UploadFile
-from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
-from sqlalchemy.orm import Session
+from fastapi import FastAPI
 
 from src.routes import contacts
 
 app = FastAPI()
+
 app.include_router(contacts.router, prefix='/api')
 
 

@@ -1,5 +1,5 @@
 from typing import List
-
+from datetime import datetime
 from sqlalchemy.orm import Session
 
 from src.database.models import Contact
@@ -15,7 +15,7 @@ async def get_contact(contact_id: int, db: Session) -> Contact:
 
 
 async def create_contact(body: ContactModel, db: Session) -> Contact:
-    contact = Contact(title=body.title, description=body.description)
+    contact = Contact(first_name=body.first_name, last_name=body.last_name, email=body.email, phone=body.phone, birthday=body.birthday)
     db.add(contact)
     db.commit()
     db.refresh(contact)

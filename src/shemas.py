@@ -6,19 +6,18 @@ class ContactBase(BaseModel):
     last_name: str = Field(max_length=50)
     email: str = Field(max_length=50)
     phone: str = Field(max_length=50)
-    birthday: date = Field(max_length=50)
+    birthday: date = Field()
 
 
 class ContactModel(ContactBase):
     pass
 
 class ContactUpdate(ContactModel):
-    done: bool
+    pass
 
 
 class ContactResponse(ContactBase):
     id: int
-    created: datetime
 
     class Config:
         orm_mode = True

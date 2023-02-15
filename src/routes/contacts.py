@@ -17,6 +17,24 @@ async def read_contacts(skip: int = 0, limit: int = 100, db: Session = Depends(g
     return contacts
 
 
+@router.get("/{first_name}", response_model=List[ContactResponse])
+async def read_contacts_with_name(first_name: str, db: Session = Depends(get_db)):
+    contacts = await repository_contacts.get_contacts_by_fname(first_name, db)
+    return contacts
+
+
+@router.get("/{last_name}", response_model=List[ContactResponse])
+async def read_contacts_with_lname(last_name: str, db: Session = Depends(get_db)):
+    contacts = await repository_contacts.get_contacts_by_lname(last_name, db)
+    return contacts
+
+
+@router.get("/{email}", response_model=List[ContactResponse])
+async def read_contacts_with_email(email: str, db: Session = Depends(get_db)):
+    contacts = await repository_contacts.get_contacts_by_email(email, db)
+    return contacts
+
+
 @router.get("/{contact_id}", response_model=ContactResponse)
 async def read_contact(contact_id: int, db: Session = Depends(get_db)):
     contact = await repository_contacts.get_contact(contact_id, db)

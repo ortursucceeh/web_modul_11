@@ -9,9 +9,18 @@ from src.shemas import ContactModel, ContactUpdate, ContactUpdate
 async def get_contacts(skip: int, limit: int, db: Session) -> List[Contact]:
     return db.query(Contact).offset(skip).limit(limit).all()
 
-
 async def get_contact(contact_id: int, db: Session) -> Contact:
     return db.query(Contact).filter(Contact.id == contact_id).first()
+
+async def get_contacts_by_fname(first_name: str, db: Session) -> List[Contact]:
+    return db.query(Contact).filter(Contact.first_name.like(f'%{first_name}%')).all()
+
+async def get_contacts_by_lname(last_name: str, db: Session) -> List[Contact]:
+    return db.query(Contact).filter(Contact.last_name.like(f'%{last_name}%')).all()
+
+async def get_contacts_by_email(email: str, db: Session) -> List[Contact]:
+    return db.query(Contact).filter(Contact.email.like(f'%{email}%')).all()
+
 
 
 async def create_contact(body: ContactModel, db: Session) -> Contact:

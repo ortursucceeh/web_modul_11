@@ -41,7 +41,15 @@ async def read_contact(contact_id: int, db: Session = Depends(get_db)):
     if contact is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found")
     return contact
-
+    
+    
+@router.get("//birthday", response_model=List[ContactResponse])
+async def read_contact_by_birthday(db: Session = Depends(get_db)):
+    contact = await repository_contacts.get_contacts_by_birthday(db)
+    if contact is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found")
+    return contact
+    
 
 @router.post("/", response_model=ContactResponse)
 async def create_contact(body: ContactModel, db: Session = Depends(get_db)):

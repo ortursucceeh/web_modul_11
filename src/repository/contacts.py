@@ -1,9 +1,9 @@
 from typing import List
-from datetime import datetime
+from datetime import datetime, timedelta
+from sqlalchemy import extract
 from sqlalchemy.orm import Session
-
 from src.database.models import Contact
-from src.shemas import ContactModel, ContactUpdate, ContactUpdate
+from src.shemas import ContactModel, ContactUpdate
 
 
 async def get_contacts(skip: int, limit: int, db: Session) -> List[Contact]:
@@ -21,7 +21,23 @@ async def get_contacts_by_lname(last_name: str, db: Session) -> List[Contact]:
 async def get_contacts_by_email(email: str, db: Session) -> List[Contact]:
     return db.query(Contact).filter(Contact.email.like(f'%{email}%')).all()
 
+async def get_contacts_by_birthday(db: Session) -> List[Contact]:
+    today = datetime.today().date()
+    next_week = today + timedelta(days=7)
 
+    contacts = db.query(Contact).filter(
+        extract('month', Contact.birthday) == next_week.month,
+        extract('day', Contact.birthday) <= next_week.day,
+        extract('day', Contact.birthday) >= today.day,
+    ).all()
+
+    upcoming_birthday_contacts = []
+    for contact in contacts:
+        bday_this_year = contact.birthday.replace(year=today.year)
+        if bday_this_year >= today:
+            upcoming_birthday_contacts.append(contact)
+
+    return upcoming_birthday_contacts
 
 async def create_contact(body: ContactModel, db: Session) -> Contact:
     contact = Contact(first_name=body.first_name, last_name=body.last_name, email=body.email, phone=body.phone, birthday=body.birthday)
@@ -39,7 +55,7 @@ async def remove_contact(contact_id: int, db: Session) -> Contact | None:
     return contact
 
 
-async def update_contact(note_id: int, body: ContactModel, db: Session) -> Contact | None:
+async def update_contact(note_id: int, body: ContactUpdate, db: Session) -> Contact | None:
     contact = db.query(Contact).filter(Contact.id == note_id).first()
     if contact:
         contact.first_name = body.first_name
@@ -49,11 +65,3 @@ async def update_contact(note_id: int, body: ContactModel, db: Session) -> Conta
         contact.birthday = body.birthday
         db.commit()
     return contact
-
-
-# async def update_status_note(note_id: int, body: NoteStatusUpdate, db: Session) -> Contact | None:
-#     contact = db.query(Contact).filter(Contact.id == note_id).first()
-#     if contact:
-#         contact.done = body.done
-#         db.commit()
-#     return contact

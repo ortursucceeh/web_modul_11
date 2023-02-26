@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import extract
 from sqlalchemy.orm import Session
 from src.database.models import Contact
-from src.shemas import ContactModel, ContactUpdate
+from src.schemas import ContactModel, ContactUpdate
 
 
 async def get_contacts(skip: int, limit: int, db: Session) -> List[Contact]:

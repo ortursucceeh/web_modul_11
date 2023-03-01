@@ -22,7 +22,6 @@ async def signup(body: UserModel, db: Session = Depends(get_db)):
     new_user = await repository_users.create_user(body, db)
     return {"user": new_user, "detail": "User successfully created"}
 
-
 @router.post("/login", response_model=TokenModel)
 async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = await repository_users.get_user_by_email(body.username, db)
@@ -31,7 +30,7 @@ async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depen
     if not auth_service.verify_password(body.password, user.password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid password")
     # Generate JWT
-    access_token = await auth_service.create_access_token(data={"sub": user.email})
+    access_token = await auth_service.create_access_token(data={"sub": user.email}, expires_delta=7200)
     refresh_token = await auth_service.create_refresh_token(data={"sub": user.email})
     await repository_users.update_token(user, refresh_token, db)
     return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}

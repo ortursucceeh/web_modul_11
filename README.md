@@ -1,1 +1,1 @@
-# FastAPI, SQLAlchemy, Alembic, PostgreSQL
+# FastAPI, SQLAlchemy, Alembic, PostgreSQL, JWT Auth

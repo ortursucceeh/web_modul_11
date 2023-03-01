@@ -1,0 +1,1 @@
+# FastAPI, SQLAlchemy, Alembic, PostgreSQL

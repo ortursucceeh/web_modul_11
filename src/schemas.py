@@ -1,5 +1,5 @@
 from datetime import datetime, date
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 
 class ContactBase(BaseModel):
     first_name: str = Field(max_length=50)
@@ -11,6 +11,7 @@ class ContactBase(BaseModel):
 
 class ContactModel(ContactBase):
     pass
+
 
 class ContactUpdate(ContactModel):
     pass
@@ -43,7 +44,12 @@ class UserResponse(BaseModel):
     user: UserDb
     detail: str = "User successfully created"
 
+
 class TokenModel(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
+    
+
+class RequestEmail(BaseModel):
+    email: EmailStr

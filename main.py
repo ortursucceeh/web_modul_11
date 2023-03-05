@@ -4,7 +4,7 @@ from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.routes import contacts, auth
+from src.routes import contacts, auth, users
 
 
 origins = [ 
@@ -24,7 +24,7 @@ app.add_middleware(
 
 app.include_router(auth.router, prefix='/api')
 app.include_router(contacts.router, prefix='/api')
-
+app.include_router(users.router, prefix='/api')
 
 @app.get("/", name="Main root")
 def read_root():

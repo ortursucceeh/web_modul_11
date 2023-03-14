@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 from src.database.connect_db import get_db
 from src.repository import users as repository_users
 from src.conf.config import settings
-
+from src.conf.messages import FAIL_EMAIL_VERIFICATION, INVALID_SCOPE, NOT_VALIDATE_CREDENTIALS 
 
 class Auth:
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -127,9 +127,9 @@ class Auth:
             if payload['scope'] == 'refresh_token':
                 email = payload['sub']
                 return email
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid scope for token')
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=INVALID_SCOPE)
         except JWTError:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate credentials')
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=NOT_VALIDATE_CREDENTIALS)
 
 
     async def get_current_user(self, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
@@ -145,7 +145,7 @@ class Auth:
         """
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials"
+            detail=NOT_VALIDATE_CREDENTIALS
         )
 
         try:
@@ -189,10 +189,10 @@ class Auth:
             if payload['scope'] == 'email_token':
                 email = payload["sub"]
                 return email
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid scope for token')
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=INVALID_SCOPE)
         except JWTError as e:
             print(e)
             raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                                detail="Invalid token for email verification")
+                                detail=FAIL_EMAIL_VERIFICATION)
 
 auth_service = Auth()

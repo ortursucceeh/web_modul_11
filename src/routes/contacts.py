@@ -9,12 +9,12 @@ from src.database.connect_db import get_db
 from src.schemas import ContactModel, ContactResponse
 from src.database.models import User
 from src.repository import contacts as repository_contacts
-
+from src.conf.messages import TOO_MANY_REQUESTS, NOT_FOUND
 
 router = APIRouter(prefix='/contacts', tags=["contacts"])
 
 
-@router.get("/", response_model=List[ContactResponse], description='No more than 10 requests per minute',
+@router.get("/", response_model=List[ContactResponse], description=TOO_MANY_REQUESTS,
             dependencies=[Depends(RateLimiter(times=10, seconds=60))])
 async def read_contacts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db),
                     current_user: User = Depends(auth_service.get_current_user)):
@@ -96,7 +96,7 @@ async def read_contact(contact_id: int, db: Session = Depends(get_db),
     """
     contact = await repository_contacts.get_contact(contact_id, current_user, db)
     if contact is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=NOT_FOUND)
     return contact
     
     
@@ -117,11 +117,11 @@ async def read_contact_by_birthday(db: Session = Depends(get_db),
     """
     contact = await repository_contacts.get_contacts_by_birthday(current_user, db)
     if contact is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=NOT_FOUND)
     return contact
     
 
-@router.post("/", response_model=ContactResponse, description='No more than 10 requests per minute',
+@router.post("/", response_model=ContactResponse, description=TOO_MANY_REQUESTS,
             dependencies=[Depends(RateLimiter(times=10, seconds=60))])
 async def create_contact(body: ContactModel, db: Session = Depends(get_db),
                     current_user: User = Depends(auth_service.get_current_user)):
@@ -137,7 +137,7 @@ async def create_contact(body: ContactModel, db: Session = Depends(get_db),
     return await repository_contacts.create_contact(body, current_user,  db)
 
 
-@router.put("/{contact_id}", response_model=ContactResponse, description='No more than 10 requests per minute',
+@router.put("/{contact_id}", response_model=ContactResponse, description=TOO_MANY_REQUESTS,
             dependencies=[Depends(RateLimiter(times=10, seconds=60))])
 async def update_contact(body: ContactModel, contact_id: int, db: Session = Depends(get_db),
                     current_user: User = Depends(auth_service.get_current_user)):
@@ -157,7 +157,7 @@ async def update_contact(body: ContactModel, contact_id: int, db: Session = Depe
     """
     contact = await repository_contacts.update_contact(contact_id, body, current_user,  db)
     if contact is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=NOT_FOUND)
     return contact
 
 
@@ -176,5 +176,5 @@ async def remove_contact(contact_id: int, db: Session = Depends(get_db),
     """
     contact = await repository_contacts.remove_contact(contact_id, current_user,  db)
     if contact is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=NOT_FOUND)
     return contact

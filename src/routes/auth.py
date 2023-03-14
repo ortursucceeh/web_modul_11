@@ -7,6 +7,9 @@ from src.database.connect_db import get_db
 from src.schemas import UserModel, UserResponse, TokenModel
 from src.repository import users as repository_users
 from src.services.auth import auth_service
+from src.conf.messages import (ALREADY_EXISTS, EMAIL_ALREADY_CONFIRMED, EMAIL_CONFIRMED,
+    EMAIL_NOT_CONFIRMED, INVALID_EMAIL, INVALID_PASSWORD, INVALID_TOKEN, SUCCESS_CREATE_USER,
+    VERIFICATION_ERROR)
 
 router = APIRouter(prefix='/auth', tags=["auth"])
 security = HTTPBearer()
@@ -28,11 +31,11 @@ async def signup(body: UserModel, background_tasks: BackgroundTasks, request: Re
     """
     exist_user = await repository_users.get_user_by_email(body.email, db)
     if exist_user:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Account already exists")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=ALREADY_EXISTS)
     body.password = auth_service.get_password_hash(body.password)
     new_user = await repository_users.create_user(body, db)
     background_tasks.add_task(send_email, new_user.email, new_user.username, request.base_url)
-    return {"user": new_user, "detail": "User successfully created"}
+    return {"user": new_user, "detail": SUCCESS_CREATE_USER}
 
 
 @router.post("/login", response_model=TokenModel)
@@ -46,11 +49,11 @@ async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depen
     """
     user = await repository_users.get_user_by_email(body.username, db)
     if user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=INVALID_EMAIL)
     if not user.confirmed:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Email not confirmed")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=EMAIL_NOT_CONFIRMED)
     if not auth_service.verify_password(body.password, user.password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid password")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=INVALID_PASSWORD)
     # Generate JWT
     access_token = await auth_service.create_access_token(data={"sub": user.email}, expires_delta=7200)
     refresh_token = await auth_service.create_refresh_token(data={"sub": user.email})
@@ -74,7 +77,7 @@ async def refresh_token(credentials: HTTPAuthorizationCredentials = Security(sec
     user = await repository_users.get_user_by_email(email, db)
     if user.refresh_token != token:
         await repository_users.update_token(user, None, db)
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=INVALID_TOKEN)
 
     access_token = await auth_service.create_access_token(data={"sub": email})
     refresh_token = await auth_service.create_refresh_token(data={"sub": email})
@@ -101,8 +104,8 @@ async def confirmed_email(token: str, db: Session = Depends(get_db)):
     email = await auth_service.get_email_from_token(token)
     user = await repository_users.get_user_by_email(email, db)
     if user is None:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Verification error")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=VERIFICATION_ERROR)
     if user.confirmed:
-        return {"message": "Your email is already confirmed"}
+        return {"message": EMAIL_ALREADY_CONFIRMED}
     await repository_users.confirmed_email(email, db)
-    return {"message": "Email confirmed"}
+    return {"message": EMAIL_CONFIRMED}

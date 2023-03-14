@@ -42,7 +42,6 @@ async def update_token(user: User, token: str | None, db: Session) -> None:
     :param token: str | None: Store the token in the database
     :param db: Session: Create a database session
     :return: None, but the return type is specified as str | none
-    :doc-author: Trelent
     """
     user.refresh_token = token
     db.commit()
@@ -55,7 +54,6 @@ async def confirmed_email(email: str, db: Session) -> None:
     :param email: str: Get the email of the user that is trying to confirm their account
     :param db: Session: Pass the database session to the function
     :return: None
-    :doc-author: Trelent
     """
     user = await get_user_by_email(email, db)
     user.confirmed = True
@@ -74,7 +72,6 @@ async def update_avatar(email, url: str, db: Session) -> User:
     :param url: str: Specify the type of data that is being passed into the function
     :param db: Session: Pass the database session to the function
     :return: The user object with the updated avatar url
-    :doc-author: Trelent
     """
     user = await get_user_by_email(email, db)
     user.avatar = url

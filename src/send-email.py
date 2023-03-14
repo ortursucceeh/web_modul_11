@@ -4,7 +4,6 @@ import uvicorn
 from fastapi import FastAPI, BackgroundTasks
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
 from pydantic import EmailStr, BaseModel
-from typing import List
 
 
 class EmailSchema(BaseModel):
@@ -29,6 +28,16 @@ app = FastAPI()
 
 @app.post("/send-email")
 async def send_in_background(background_tasks: BackgroundTasks, body: EmailSchema):
+    """
+    The send_in_background function is a helper function that will send an email in the background.
+    It takes two arguments:
+        - background_tasks: A BackgroundTasks object from FastAPI, which allows us to run tasks in the background.
+        - body: The request body, which contains an email address and a password reset token.  This information is used to populate our template.
+    
+    :param background_tasks: BackgroundTasks: Add a task to the background tasks queue
+    :param body: EmailSchema: Get the email address of the user
+    :return: A dictionary with a message key
+    """
     message = MessageSchema(
         subject="Reset a user's password",
         recipients=[body.email],

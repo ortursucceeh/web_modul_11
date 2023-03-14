@@ -99,7 +99,6 @@ async def get_contacts_by_birthday(user: User, db: Session) -> List[Contact]:
         bday_this_year = contact.birthday.replace(year=today.year)
         if bday_this_year >= today:
             upcoming_birthday_contacts.append(contact)
-
     return upcoming_birthday_contacts
 
 async def create_contact(body: ContactModel, user: User, db: Session) -> Contact:
@@ -119,7 +118,7 @@ async def create_contact(body: ContactModel, user: User, db: Session) -> Contact
     db.refresh(contact)
     return contact
 
-async def update_contact(note_id: int, body: ContactUpdate, user: User, db: Session) -> Contact | None:
+async def update_contact(contact_id: int, body: ContactUpdate, user: User, db: Session) -> Contact | None:
     """
     The update_contact function updates a contact in the database.
         Args:
@@ -135,7 +134,7 @@ async def update_contact(note_id: int, body: ContactUpdate, user: User, db: Sess
     :param db: Session: Pass the database session to the function
     :return: A contact object, which is a model
     """
-    contact = db.query(Contact).filter(and_(Contact.user_id == user.id, Contact.id == note_id)).first()
+    contact = db.query(Contact).filter(and_(Contact.user_id == user.id, Contact.id == contact_id)).first()
     if contact:
         contact.first_name = body.first_name
         contact.last_name = body.last_name

@@ -1,12 +1,10 @@
-from typing import List
-
 from fastapi import APIRouter, HTTPException, Depends, status, Security, BackgroundTasks, Request
 from fastapi.security import OAuth2PasswordRequestForm, HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
 from src.services.email import send_email
 from src.database.connect_db import get_db
-from src.schemas import UserModel, UserResponse, TokenModel, RequestEmail
+from src.schemas import UserModel, UserResponse, TokenModel
 from src.repository import users as repository_users
 from src.services.auth import auth_service
 
@@ -108,15 +106,3 @@ async def confirmed_email(token: str, db: Session = Depends(get_db)):
         return {"message": "Your email is already confirmed"}
     await repository_users.confirmed_email(email, db)
     return {"message": "Email confirmed"}
-
-
-# @router.post('/request_email')
-# async def request_email(body: RequestEmail, background_tasks: BackgroundTasks, request: Request,
-#                         db: Session = Depends(get_db)):
-#     user = await repository_users.get_user_by_email(body.email, db)
-
-#     if user.confirmed:
-#         return {"message": "Your email is already confirmed"}
-#     if user:
-#         background_tasks.add_task(send_email, user.email, user.username, request.base_url)
-#     return {"message": "Check your email for confirmation."}

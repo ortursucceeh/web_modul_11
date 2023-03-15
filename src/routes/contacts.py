@@ -125,10 +125,10 @@ async def read_contact_by_birthday(db: Session = Depends(get_db),
     :param current_user: User: Get the current user from the database
     :return: A list of contacts
     """
-    contact = await repository_contacts.get_contacts_by_birthday(current_user, db)
-    if contact is None:
+    contacts = await repository_contacts.get_contacts_by_birthday(current_user, db)
+    if not contacts :
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=NOT_FOUND)
-    return contact
+    return contacts
     
 
 @router.post("/", response_model=ContactResponse)

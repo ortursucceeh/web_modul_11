@@ -90,17 +90,16 @@ async def refresh_token(credentials: HTTPAuthorizationCredentials = Security(sec
 async def confirmed_email(token: str, db: Session = Depends(get_db)):
     """
     The confirmed_email function is used to confirm a user's email address.
-        It takes the token from the URL and uses it to get the user's email address.
-        Then, it checks if that user exists in our database, and if they do not exist, 
-        an HTTP 400 error is raised. If they do exist but their account has already been confirmed,
-        then a message saying so will be returned. Otherwise (if they are found in our database 
-        and their account has not yet been confirmed), we call repository_users' confirmed_email function 
-         with that email as its
-    
+        It takes in the token that was sent to the user's email and uses it to get their email address.
+        Then, it gets the user from our database using their email address and checks if they exist. If not, an error is thrown.
+        Next, we check if they have already confirmed their account by checking if confirmed = True for them in our database (if so, an error is thrown).
+        Finally, we set confirmed = True for them in our database.
+
     :param token: str: Get the token from the url
-    :param db: Session: Get the database session
-    :return: A dictionary with a message
+    :param db: Session: Get the database connection
+    :return: A dictionary with the message &quot;email confirmed&quot;
     """
+
     email = await auth_service.get_email_from_token(token)
     user = await repository_users.get_user_by_email(email, db)
     if user is None:

@@ -46,7 +46,6 @@ async def get_contacts_by_fname(first_name: str, user: User, db: Session) -> Lis
     :param user: User: Get the user_id from the user object
     :param db: Session: Pass the database session to the function
     :return: A list of contacts with the matching first name
-    :doc-author: Trelent
     """
     return db.query(Contact).filter(and_(Contact.user_id == user.id, func.lower(Contact.first_name).like(f'%{first_name.lower()}%'))).all()
 
@@ -59,9 +58,9 @@ async def get_contacts_by_lname(last_name: str, user: User, db: Session) -> List
     :param user: User: Get the user_id from the user object
     :param db: Session: Access the database
     :return: A list of contacts with the last name matching the query
-    :doc-author: Trelent
     """
-    return db.query(Contact).filter(and_(Contact.user_id == user.id,  func.lower(Contact.last_name).like(f'%{last_name.lower()}%'))).all()
+    return db.query(Contact).filter(and_(Contact.user_id == user.id, func.lower(Contact.last_name).like(f'%{last_name.lower()}%'))).all()
+    
 
 async def get_contacts_by_email(email: str, user: User, db: Session) -> List[Contact]:
     """
@@ -74,7 +73,7 @@ async def get_contacts_by_email(email: str, user: User, db: Session) -> List[Con
     :return: A list of contacts that match the email
     :doc-author: Trelent
     """
-    return db.query(Contact).filter(and_(Contact.user_id == user.id,  Contact.email).like(f'%{email}%')).all()
+    return db.query(Contact).filter(and_(Contact.user_id == user.id, Contact.email.like(f'%{email}%'))).all()
 
 async def get_contacts_by_birthday(user: User, db: Session) -> List[Contact]:
     """

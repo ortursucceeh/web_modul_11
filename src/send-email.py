@@ -5,6 +5,8 @@ from fastapi import FastAPI, BackgroundTasks
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
 from pydantic import EmailStr, BaseModel
 
+from conf.messages import EMAIL_HAS_BEEN_SEND
+
 
 class EmailSchema(BaseModel):
     email: EmailStr
@@ -49,7 +51,7 @@ async def send_in_background(background_tasks: BackgroundTasks, body: EmailSchem
 
     background_tasks.add_task(fm.send_message, message, template_name="example_email.html")
 
-    return {"message": "email has been sent"}
+    return {"message": EMAIL_HAS_BEEN_SEND}
 
 
 if __name__ == '__main__':

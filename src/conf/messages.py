@@ -1,5 +1,6 @@
 NOT_FOUND = 'Not Found'
 ALREADY_EXISTS = "Account already exists"
+DOESNT_EXISTS = "Account doesn't exists"
 SUCCESS_CREATE_USER = "User successfully created. Check your email for confirmation."
 INVALID_PASSWORD = "Invalid password"
 INVALID_TOKEN = "Invalid refresh token"

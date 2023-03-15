@@ -8,7 +8,7 @@ from src.conf.messages import ALREADY_EXISTS, EMAIL_NOT_CONFIRMED, INVALID_PASSW
 
 def test_create_user(client, user, monkeypatch):
     mock_send_email = MagicMock()
-    monkeypatch.setattr("src.routes.auth.send_email", mock_send_email)
+    monkeypatch.setattr("src.routes.auth.confirmed_email", mock_send_email)
     response = client.post(
         "/api/auth/signup",
         json=user,

@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, UploadFile, File
-from sqlalchemy.orm import Session
 import cloudinary
 import cloudinary.uploader
+from fastapi import APIRouter, Depends, UploadFile, File
+from sqlalchemy.orm import Session
 
 from src.database.connect_db import get_db
 from src.database.models import User

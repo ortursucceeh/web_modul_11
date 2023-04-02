@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     redis_host: str = "localhost"
     redis_port: int = 6379
     cloudinary_name: str = 'name'
-    cloudinary_api_key: int = 5555555555555555
+    cloudinary_api_key: int = 5555555555
     cloudinary_api_secret: str = 'secret'
 
     class Config:

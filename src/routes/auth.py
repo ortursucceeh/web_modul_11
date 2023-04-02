@@ -11,6 +11,7 @@ from src.conf.messages import (ALREADY_EXISTS, EMAIL_ALREADY_CONFIRMED, EMAIL_CO
     EMAIL_NOT_CONFIRMED, INVALID_EMAIL, INVALID_PASSWORD, INVALID_TOKEN, SUCCESS_CREATE_USER,
     VERIFICATION_ERROR)
 
+
 router = APIRouter(prefix='/auth', tags=["auth"])
 security = HTTPBearer()
 

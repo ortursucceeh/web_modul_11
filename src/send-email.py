@@ -6,18 +6,19 @@ from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
 from pydantic import EmailStr, BaseModel
 
 from conf.messages import EMAIL_HAS_BEEN_SEND
+from src.conf.config import settings
 
 
 class EmailSchema(BaseModel):
     email: EmailStr
 
 conf = ConnectionConfig(
-    MAIL_USERNAME="ortursucceeh778@meta.ua",
-    MAIL_PASSWORD="QWEqweqwe123123123",
-    MAIL_FROM="ortursucceeh778@meta.ua",
+    MAIL_USERNAME=settings.mail_username,
+    MAIL_PASSWORD=settings.mail_password,
+    MAIL_FROM=settings.mail_from,
     MAIL_PORT=465,
-    MAIL_SERVER="smtp.meta.ua",
-    MAIL_FROM_NAME="Example email",
+    MAIL_SERVER=settings.mail_server,
+    MAIL_FROM_NAME=settings.mail_from,
     MAIL_STARTTLS=False,
     MAIL_SSL_TLS=True,
     USE_CREDENTIALS=True,
@@ -41,7 +42,7 @@ async def send_in_background(background_tasks: BackgroundTasks, body: EmailSchem
     :return: A dictionary with a message key
     """
     message = MessageSchema(
-        subject="Reset a user's password",
+        subject="Confirm an email address",
         recipients=[body.email],
         template_body={"fullname": "Billy Jones"},
         subtype=MessageType.html

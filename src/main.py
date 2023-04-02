@@ -1,7 +1,6 @@
-import time
 import uvicorn
 import redis.asyncio as redis
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi_limiter import FastAPILimiter
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -11,7 +10,7 @@ from src.routes import contacts, auth, users
 
 
 origins = [ 
-    "http://localhost:3000"
+    "http://localhost:8000"
     ]
 
 
@@ -42,6 +41,7 @@ def read_root():
     :return: A dictionary with a message
     """
     return {"message": WELCOME_MESSAGE}
+
 
 app.include_router(auth.router, prefix='/api')
 app.include_router(contacts.router, prefix='/api')
